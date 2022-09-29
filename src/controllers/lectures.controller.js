@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import * as LectureService from '../services/lecture/index.js';
+import lectureSchema from '../helpers/schemas/lecture.schema.js';
+import joiMiddleware from '../helpers/middlewares/joiMiddleware.js';
+const router = Router();
+router.get('/', LectureService.getLecture);
+router.get('/:id', LectureService.getLectureById);
+router.get('/', LectureService.getRegLecture);
+router.post('/', joiMiddleware(lectureSchema), LectureService.registerLecture);
+export default router;
