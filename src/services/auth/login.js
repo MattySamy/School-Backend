@@ -7,6 +7,7 @@ export async function login(req, res) {
         const { email, password } = req.body;
         const user = Users.find((u) => u.email === email);
         if (!user) {
+
             return badRequestResponse(res, 'Invalid email or password');
         }
         const isValid = bcrypt.compareSync(password, user.password);
