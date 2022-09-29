@@ -7,10 +7,6 @@ export async function registerLecture(req, res, next) {
     try {
         const { lectureId, studentId } = req.body;
         const student = User.find((s) => s.id == studentId);
-
-        if (!lectureId || !studentId) {
-            return badRequestResponse(res, 'Please fill all fields');
-        }
         if (!student) {
             return badRequestResponse(res, 'Student not found');
         }
