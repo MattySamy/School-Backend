@@ -1,33 +1,38 @@
 import Lecture from '../../helpers/db/lecture.db.js';
 import User from '../../helpers/db/users.db.js';
-import RegLecture from '../../helpers/db/regLecture.db.js';
 import { badRequestResponse } from '../../helpers/functions/ResponseHandler.js';
 import { okResponse } from '../../helpers/functions/ResponseHandler.js';
 export async function registerLecture(req, res, next) {
     try {
-        const { lectureId, studentId } = req.body;
-        const student = User.find((s) => s.id == studentId);
+        const { lectureID, id } = req.body;
+        const student = User.find((u) => u.id == id);
+        const studentIndex = User.findIndex((u) => u.id == id);
+        const lecIndex = Lecture.find((l) => l.name == lectureID);
+        if (!lecIndex) {
+            return badRequestResponse(res, "lecture does not exist");
+        }
         if (!student) {
-            return badRequestResponse(res, 'Student not found');
+            return badRequestResponse(res, "user does not exist");
         }
-        if (student.role == 'teacher') {
-            return badRequestResponse(res, 'Teacher cannot register for a lecture');
+        if (student.role != "student") {
+            return badRequestResponse(res, "User should be student");
         }
-        for (const lecture of lectureId) {
-            const lectureFound = Lecture.find(
-                (lectureFound) => lectureFound.id == lecture.lectureId
+        if (!User[studentIndex].lectures) {
+            User[studentIndex] = {...student, lectures: [{ lecture: lectureID }] };
+            return okResponse(
+                res,
+                "registerd lecture successfully",
+                User[studentIndex]
             );
-            if (!lectureFound) {
-                return badRequestResponse(res, 'Lecture not found');
-            }
         }
-        const lecture = {
-            LectureRegisterId: RegLecture.length + 1,
-            studentId,
-            lectureId,
+        if (User[studentIndex].lectures.some((lect) => lect.lecture == lectureID)) {
+            return badRequestResponse(
+                res,
+                "student has already registerd this lecture"
+            );
         }
-        Lecture.push(lecture);
-        return okResponse(res, 'Lecture registered successfully', lecture);
+        User[studentIndex].lectures.push({ lecture: lectureID });
+        return okResponse(res, "registerd lecture successfully", User[studentIndex]);
     } catch (err) {
         next(err);
     }
