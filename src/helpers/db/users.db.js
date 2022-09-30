@@ -3,6 +3,6 @@ export default [{
     name: 'Mostafa Samy',
     email: 'mostafasamysfsf@yahoo.com',
     phone: '+201000676127',
-    role: 'student',
+    role: 'teacher',
     password: "0100786545M+s",
 }];
